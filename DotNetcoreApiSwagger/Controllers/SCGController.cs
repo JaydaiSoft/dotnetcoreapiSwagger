@@ -57,7 +57,7 @@ namespace DotNetcoreApiSwagger.Controllers
             catch(Exception ex)
             {
                 result = ex.GetBaseException().Message;
-                return result;
+                return StatusCode(500,result);
             }
             
         }
