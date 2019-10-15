@@ -23,7 +23,16 @@ namespace DotNetcoreApiSwagger
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    //.AllowCredentials()
+                    //.WithOrigins("http://localhost:61671")
+                    .AllowAnyOrigin());
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc(option => option.EnableEndpointRouting = false);
             services.AddSwaggerGen(c =>
@@ -32,17 +41,17 @@ namespace DotNetcoreApiSwagger
                 {
                     Version = "v1",
                     Title = "API",
-                    Description = "Test API with ASP.NET Core 3.0",
+                    Description = "SCG API with ASP.NET Core 3.0",
                     //TermsOfService = new System.Uri("None"),
                     Contact = new OpenApiContact()
                     {
-                        Name = "Dotnet Detail",
-                        Email = "dotnetdetail@gmail.com",
+                        Name = "Digital Office",
+                        Email = "digitaloffice@scg.com",
                         //Url = new System.Uri("www.dotnetdetail.net")
                     },
                     License = new OpenApiLicense
                     {
-                        Name = "ABC",
+                        Name = "License by SCG Digital Office",
                         //Url = new System.Uri("www.dotnetdetail.net")
                     },
                 });
@@ -57,21 +66,6 @@ namespace DotNetcoreApiSwagger
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            #region Old logic
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-
-            //app.UseRouting();
-
-            //app.UseAuthorization();
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllers();
-            //});
-            #endregion
 
             if (env.IsDevelopment())
             {
@@ -83,12 +77,13 @@ namespace DotNetcoreApiSwagger
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Test API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SCG API V1");
             });
         }
     }

@@ -17,9 +17,22 @@ namespace DotNetcoreApiSwagger.Controllers
         /// </summary>
         /// <remarks>This API will get the values.</remarks>
         [HttpGet]
+        [Route("TestGetValue")]
         public ActionResult<IEnumerable<string>> Get()
         {
             return new string[] { "value1", "value2" };
+        }
+
+        // GET api alive
+        /// <summary>
+        /// Get API Alive
+        /// </summary>
+        /// <remarks>This API will get the values.</remarks>
+        [HttpGet]
+        [Route("IsAlive")]
+        public ActionResult<bool> IsAlive()
+        {
+            return true;
         }
     }
 }
