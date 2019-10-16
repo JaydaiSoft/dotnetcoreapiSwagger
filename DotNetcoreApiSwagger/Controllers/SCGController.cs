@@ -62,6 +62,28 @@ namespace DotNetcoreApiSwagger.Controllers
             
         }
 
+        // GET local restaurants at Bangsue
+        /// <summary>
+        /// GET local restaurants at Bangsue
+        /// </summary>
+        /// <remarks> restaurants at Bangsue </remarks>
+        [HttpGet, Route("GooglePlaceSearch")]
+        public ActionResult<string> GooglePlaceSearch()
+        {
+            string result = "";
+            try
+            {
+                result = _businessManagement.GooglePlaceSearch();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                result = ex.GetBaseException().Message;
+                return StatusCode(500, result);
+            }
+
+        }
+
         // POST line notify
         /// <summary>
         /// Push Line message notify

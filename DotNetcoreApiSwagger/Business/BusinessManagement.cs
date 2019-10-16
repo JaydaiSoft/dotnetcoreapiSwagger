@@ -18,11 +18,17 @@ namespace DotNetcoreApiSwagger.Business
             var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             lineNotifyUrl = configuration.GetSection("LineUrl").Value;
             token = configuration.GetSection("Token").Value;
+            googlePlaceSearchApi = configuration.GetSection("GooglePlaceSearchUrl").Value;
+            googleToken = configuration.GetSection("GoogleToken").Value;
         }
 
         private string token { get; set; }
 
         private string lineNotifyUrl { get; set; }
+
+        private string googlePlaceSearchApi { get; set; }
+
+        private string googleToken { get; set; }
 
         public string CalculateNumberSeries()
         {
@@ -76,6 +82,31 @@ namespace DotNetcoreApiSwagger.Business
             {
                 Console.WriteLine(ex.ToString());
                 return IsSuccess;
+            }
+        }
+
+        public string GooglePlaceSearch()
+        {
+            try
+            {
+                googlePlaceSearchApi = googlePlaceSearchApi + "restaurants+in+Bangsue" + "&key=" + googleToken;
+                var request = (HttpWebRequest)WebRequest.Create(googlePlaceSearchApi);
+
+                request.Method = "GET";
+                request.ContentType = "application/json; charset=UTF-8";
+
+                var response = (HttpWebResponse)request.GetResponse();
+                var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return responseString;
+                }
+                return responseString;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return ex.GetBaseException().Message;
             }
         }
     }

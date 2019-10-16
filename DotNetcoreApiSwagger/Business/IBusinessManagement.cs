@@ -10,5 +10,7 @@ namespace DotNetcoreApiSwagger.Business
         string CalculateNumberSeries();
 
         bool LineNotifyMessage(string message);
+
+        string GooglePlaceSearch();
     }
 }
