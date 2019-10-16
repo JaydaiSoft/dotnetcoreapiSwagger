@@ -8,5 +8,7 @@ namespace DotNetcoreApiSwagger.Business
     public interface IBusinessManagement
     {
         string CalculateNumberSeries();
+
+        bool LineNotifyMessage(string message);
     }
 }

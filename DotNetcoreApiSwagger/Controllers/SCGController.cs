@@ -61,5 +61,31 @@ namespace DotNetcoreApiSwagger.Controllers
             }
             
         }
+
+        // POST line notify
+        /// <summary>
+        /// Push Line message notify
+        /// </summary>
+        /// <remarks> push string line message </remarks>
+        [HttpPost, Route("LineNotifyMessage")]
+        public ActionResult<string> LineNotifyMessage(string message)
+        {
+            bool result = false;
+            try
+            {
+                result = _businessManagement.LineNotifyMessage(message);
+                if (result)
+                {
+                    return Ok(result);
+                }
+                return BadRequest();
+                
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.GetBaseException().Message);
+            }
+
+        }
     }
 }
