@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DotNetcoreApiSwagger.Model.Entity;
+using DotNetcoreApiSwagger.Repository;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,8 +14,10 @@ namespace DotNetcoreApiSwagger.Business
 {
     public class BusinessManagement : IBusinessManagement
     {
+        private IScgRepository repository;
         public BusinessManagement()
         {
+            this.repository = new ScgRepository();
             //Get AppSetting from appsettings.json
             var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             lineNotifyUrl = configuration.GetSection("LineUrl").Value;
@@ -108,6 +112,14 @@ namespace DotNetcoreApiSwagger.Business
                 Console.WriteLine(ex.ToString());
                 return ex.GetBaseException().Message;
             }
+        }
+
+        public List<Restaurants> GetRestaurants()
+        {
+            List<Restaurants> entities = repository.GetRestaurants();
+            if (entities != null && entities.Any())
+                return entities;
+            return new List<Restaurants>();
         }
     }
 }

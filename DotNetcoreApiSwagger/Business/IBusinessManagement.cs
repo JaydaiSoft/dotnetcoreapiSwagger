@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotNetcoreApiSwagger.Model.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,5 +13,7 @@ namespace DotNetcoreApiSwagger.Business
         bool LineNotifyMessage(string message);
 
         string GooglePlaceSearch();
+
+        List<Restaurants> GetRestaurants();
     }
 }

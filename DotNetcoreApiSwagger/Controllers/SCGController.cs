@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetcoreApiSwagger.Business;
+using DotNetcoreApiSwagger.Model.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,10 @@ namespace DotNetcoreApiSwagger.Controllers
     [ApiController]
     public class SCGController : ControllerBase
     {
-        private IBusinessManagement _businessManagement;
+        private IBusinessManagement scgManager;
         public SCGController()
         {
-            _businessManagement = new BusinessManagement();
+            this.scgManager = new BusinessManagement();
         }
 
         // GET api/values
@@ -51,7 +52,7 @@ namespace DotNetcoreApiSwagger.Controllers
             string result = "";
             try
             {
-                result = _businessManagement.CalculateNumberSeries();
+                result = scgManager.CalculateNumberSeries();
                 return Ok(result);
             }
             catch(Exception ex)
@@ -73,7 +74,7 @@ namespace DotNetcoreApiSwagger.Controllers
             string result = "";
             try
             {
-                result = _businessManagement.GooglePlaceSearch();
+                result = scgManager.GooglePlaceSearch();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -95,13 +96,39 @@ namespace DotNetcoreApiSwagger.Controllers
             bool result = false;
             try
             {
-                result = _businessManagement.LineNotifyMessage(message);
+                result = scgManager.LineNotifyMessage(message);
                 if (result)
                 {
                     return Ok(result);
                 }
                 return BadRequest();
                 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.GetBaseException().Message);
+            }
+
+        }
+
+        // GET Restaurants
+        /// <summary>
+        /// GET Restaurants
+        /// </summary>
+        /// <remarks> GET Restaurants </remarks>
+        [HttpGet, Route("GetRestaurants")]
+        public ActionResult<List<Restaurants>> GetRestaurants()
+        {
+            List<Restaurants> result;
+            try
+            {
+                result = scgManager.GetRestaurants();
+                if (result != null && result.Count > 0)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(new List<Restaurants>());
+
             }
             catch (Exception ex)
             {

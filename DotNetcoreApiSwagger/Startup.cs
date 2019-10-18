@@ -1,6 +1,8 @@
+using DotNetcoreApiSwagger.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,6 +37,14 @@ namespace DotNetcoreApiSwagger
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc(option => option.EnableEndpointRouting = false);
+
+            // Add configuration for DbContext
+            // Use connection string from appsettings.json file
+            services.AddDbContext<ScgContext>(options =>
+            {
+                options.UseSqlServer(Configuration["AppSettings:ConnectionString"]);
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
