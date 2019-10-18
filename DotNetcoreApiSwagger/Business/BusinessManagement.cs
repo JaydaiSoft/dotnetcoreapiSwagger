@@ -3,21 +3,19 @@ using DotNetcoreApiSwagger.Repository;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DotNetcoreApiSwagger.Business
 {
     public class BusinessManagement : IBusinessManagement
     {
         private IScgRepository repository;
-        public BusinessManagement()
+        public BusinessManagement(IScgRepository repository)
         {
-            this.repository = new ScgRepository();
+            this.repository = repository;
             //Get AppSetting from appsettings.json
             var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             lineNotifyUrl = configuration.GetSection("LineUrl").Value;

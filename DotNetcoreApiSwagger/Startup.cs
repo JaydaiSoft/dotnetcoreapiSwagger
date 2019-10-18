@@ -10,6 +10,9 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.Reflection;
+using Autofac;
+using DotNetcoreApiSwagger.Business;
+using Autofac.Extensions.DependencyInjection;
 
 namespace DotNetcoreApiSwagger
 {
@@ -21,6 +24,7 @@ namespace DotNetcoreApiSwagger
         }
 
         public IConfiguration Configuration { get; }
+        public IContainer AutofacContainer;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -71,6 +75,19 @@ namespace DotNetcoreApiSwagger
                 c.IncludeXmlComments(xmlPath);
 
             });
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            // Add any Autofac modules or registrations.
+            // This is called AFTER ConfigureServices so things you
+            // register here OVERRIDE things registered in ConfigureServices.
+            //
+            // You must have the call to AddAutofac in the Program.Main
+            // method or this won't be called.
+            builder.RegisterType<BusinessManagement>().As<IBusinessManagement>().InstancePerLifetimeScope();
+            builder.RegisterType<ScgRepository>().As<IScgRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<ScgContext>().As<IScgContext>().InstancePerLifetimeScope();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

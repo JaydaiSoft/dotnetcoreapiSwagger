@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DotNetcoreApiSwagger.Business;
 using DotNetcoreApiSwagger.Model.Entity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetcoreApiSwagger.Controllers
@@ -14,9 +11,9 @@ namespace DotNetcoreApiSwagger.Controllers
     public class SCGController : ControllerBase
     {
         private IBusinessManagement scgManager;
-        public SCGController()
+        public SCGController(IBusinessManagement scgManager)
         {
-            this.scgManager = new BusinessManagement();
+            this.scgManager = scgManager;
         }
 
         // GET api/values
