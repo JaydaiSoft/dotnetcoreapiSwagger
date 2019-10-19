@@ -17,5 +17,15 @@ namespace DotNetcoreApiSwagger.Repository
         {
             return context.RestaurantEntity.ToList();
         }
+
+        public void SaveRestaurants(List<Restaurants> restaurants)
+        {
+            context.RestaurantEntity.AddRange(restaurants);
+        }
+
+        public void Commit()
+        {
+            context.SaveChanges();
+        }
     }
 }

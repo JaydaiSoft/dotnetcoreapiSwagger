@@ -1,4 +1,5 @@
 ﻿using DotNetcoreApiSwagger.Model.Entity;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace DotNetcoreApiSwagger.Business
         string GooglePlaceSearch();
 
         List<Restaurants> GetRestaurants();
+
+        bool SaveRestaurants(JObject jObject, ref List<Restaurants> restaurants);
     }
 }

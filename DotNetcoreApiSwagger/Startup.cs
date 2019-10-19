@@ -41,6 +41,7 @@ namespace DotNetcoreApiSwagger
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddMvc().AddNewtonsoftJson();
 
             // Add configuration for DbContext
             // Use connection string from appsettings.json file

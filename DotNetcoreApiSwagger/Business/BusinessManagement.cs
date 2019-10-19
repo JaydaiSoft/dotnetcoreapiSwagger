@@ -1,6 +1,7 @@
 ﻿using DotNetcoreApiSwagger.Model.Entity;
 using DotNetcoreApiSwagger.Repository;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +38,7 @@ namespace DotNetcoreApiSwagger.Business
             int[] numberSeries = new int[7];
             numberSeries = RegonitionPattern(ref numberSeries);
             return string.Format("X, 5, 9, 15, 23, Y, Z Result : X = {0}, Y = {1}, Z = {2}"
-                ,numberSeries[0], numberSeries[5], numberSeries[6]);
+                , numberSeries[0], numberSeries[5], numberSeries[6]);
         }
 
         private int[] RegonitionPattern(ref int[] numberSeries)
@@ -74,7 +75,7 @@ namespace DotNetcoreApiSwagger.Business
                 using (var stream = request.GetRequestStream()) stream.Write(data, 0, data.Length);
                 var response = (HttpWebResponse)request.GetResponse();
                 var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                if(response.StatusCode == HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
                     IsSuccess = true;
                 }
@@ -118,6 +119,37 @@ namespace DotNetcoreApiSwagger.Business
             if (entities != null && entities.Any())
                 return entities;
             return new List<Restaurants>();
+        }
+
+        public bool SaveRestaurants(JObject jObject, ref List<Restaurants> restaurants)
+        {
+            bool IsSaveSuccess = false;
+            try
+            {
+                Restaurants restaurant = null;
+                JArray restaurants_count = (JArray)jObject["results"];
+                int count = restaurants_count.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    restaurant = new Restaurants();
+                    restaurant.Address = (string)jObject["results"][i]["formatted_address"];
+                    restaurant.Name = (string)jObject["results"][i]["name"];
+                    restaurant.Pricelevel = (int?)jObject["results"][i]["price_level"] != null ? (int?)jObject["results"][i]["price_level"] : 0;
+                    restaurant.Rating = (decimal?)jObject["results"][i]["rating"];
+                    restaurant.Available = jObject["results"][i]["opening_hours"] != null ? (bool?)jObject["results"][i]["opening_hours"]["open_now"] : null;
+                    restaurants.Add(restaurant);
+                }
+                repository.SaveRestaurants(restaurants);
+                repository.Commit();
+                IsSaveSuccess = true;
+                return IsSaveSuccess;
+            }
+            catch (Exception ex)
+            {
+                IsSaveSuccess = false;
+                return IsSaveSuccess;
+            }
+
         }
     }
 }

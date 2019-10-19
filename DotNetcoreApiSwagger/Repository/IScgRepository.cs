@@ -9,5 +9,8 @@ namespace DotNetcoreApiSwagger.Repository
     public interface IScgRepository
     {
         List<Restaurants> GetRestaurants();
+
+        void SaveRestaurants(List<Restaurants> restaurants);
+        void Commit();
     }
 }

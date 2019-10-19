@@ -37,6 +37,7 @@ namespace DotNetcoreApiSwagger.Repository
                 builder.Property(p => p.Address).HasColumnType("nvarchar(MAX)").IsRequired();
                 builder.Property(p => p.Pricelevel).HasColumnType("int");
                 builder.Property(p => p.Rating).HasColumnType("numeric(18, 2)");
+                builder.Property(p => p.Available).HasColumnType("bit");
             }
         }
 

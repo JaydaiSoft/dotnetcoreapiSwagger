@@ -10,5 +10,6 @@ namespace DotNetcoreApiSwagger.Repository
     public interface IScgContext
     {
         DbSet<Restaurants> RestaurantEntity { get; set; }
+        int SaveChanges();
     }
 }

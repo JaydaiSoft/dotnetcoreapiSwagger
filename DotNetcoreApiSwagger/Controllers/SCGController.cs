@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using DotNetcoreApiSwagger.Business;
 using DotNetcoreApiSwagger.Model.Entity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DotNetcoreApiSwagger.Controllers
 {
@@ -14,17 +16,6 @@ namespace DotNetcoreApiSwagger.Controllers
         public SCGController(IBusinessManagement scgManager)
         {
             this.scgManager = scgManager;
-        }
-
-        // GET api/values
-        /// <summary>
-        /// Get API Value
-        /// </summary>
-        /// <remarks>This API will get the values.</remarks>
-        [HttpGet, Route("TestGetValue")]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            return new string[] { "value1", "value2" };
         }
 
         // GET api alive
@@ -52,12 +43,12 @@ namespace DotNetcoreApiSwagger.Controllers
                 result = scgManager.CalculateNumberSeries();
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result = ex.GetBaseException().Message;
-                return StatusCode(500,result);
+                return StatusCode(500, result);
             }
-            
+
         }
 
         // GET local restaurants at Bangsue
@@ -99,7 +90,7 @@ namespace DotNetcoreApiSwagger.Controllers
                     return Ok(result);
                 }
                 return BadRequest();
-                
+
             }
             catch (Exception ex)
             {
@@ -126,6 +117,54 @@ namespace DotNetcoreApiSwagger.Controllers
                 }
                 return BadRequest(new List<Restaurants>());
 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.GetBaseException().Message);
+            }
+
+        }
+
+        // POST RestaurantsNotify
+        /// <summary>
+        /// Push RestaurantsNotify
+        /// </summary>
+        /// <remarks> push string RestaurantsNotify </remarks>
+        [HttpPost, Route("RestaurantsNotify")]
+        public ActionResult<string> RestaurantsNotify()
+        {
+            List<bool> allSuccess = new List<bool>();
+            try
+            {
+                string JsonStrRestaurants = scgManager.GooglePlaceSearch();
+                JObject jObject = JObject.Parse(JsonStrRestaurants);
+                List<Restaurants> Restaurants = new List<Restaurants>();
+                bool IsSaveSuccess = scgManager.SaveRestaurants(jObject, ref Restaurants);
+                if (IsSaveSuccess)
+                {
+                    if (Restaurants != null && Restaurants.Count > 0)
+                    {
+                        for (int i = 0; i < Restaurants.Count; i++)
+                        {
+                            string message = string.Format("ชื่อร้าน : {0} , ที่อยู่ : {1}, เรทราคา : {2}, เรทติ้งร้าน : {3}, สถานะร้าน : {4}",
+                                Restaurants[i].Name,
+                                Restaurants[i].Address,
+                                Restaurants[i].Pricelevel,
+                                Restaurants[i].Rating,
+                                Restaurants[i].Available.HasValue ?
+                                Restaurants[i].Available == true ? "Open" : "Close" : "Unknow");
+                            bool canSend = scgManager.LineNotifyMessage(message);
+                            allSuccess.Add(canSend);
+                        }
+
+                    }
+                }
+
+                if (allSuccess.FindAll(q => q.Equals(true)).Count == Restaurants.Count)
+                {
+                    return Ok(Restaurants);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {
